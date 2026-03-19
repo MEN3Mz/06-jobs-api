@@ -1,35 +1,28 @@
 openapi: 3.0.0
 info:
   title: Jobs API
-  description: A management API for job applications
   version: 1.0.0
 servers:
   - url: https://zero6-jobs-api-ac4z.onrender.com/api/v1
 paths:
   /auth/register:
     post:
-      summary: Register a new user
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                name: { type: string }
-                email: { type: string }
-                password: { type: string }
+      summary: Register User
       responses:
-        201:
-          description: Created
+        '201':
+          description: User created successfully
+        '400':
+          description: Missing name, email, or password
   /jobs:
     get:
-      summary: Get all jobs
+      summary: Get all user jobs
       security:
         - bearerAuth: []
       responses:
-        200:
+        '200':
           description: Success
+        '401':
+          description: No token provided
 components:
   securitySchemes:
     bearerAuth:
