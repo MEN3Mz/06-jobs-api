@@ -10,19 +10,19 @@ paths:
       summary: Register User
       responses:
         '201':
-          description: User created successfully
+          description: Created
         '400':
-          description: Missing name, email, or password
+          description: Bad Request
   /jobs:
     get:
-      summary: Get all user jobs
+      summary: Get all jobs
       security:
         - bearerAuth: []
       responses:
         '200':
           description: Success
         '401':
-          description: No token provided
+          description: Unauthorized
 components:
   securitySchemes:
     bearerAuth:
