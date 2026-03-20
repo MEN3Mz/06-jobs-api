@@ -22,6 +22,12 @@ const xss = require('xss-clean');
 const cors = require('cors');
 const rateLimiter = require('express-rate-limit');
 
+const swaggerUI = require('swagger-ui-express');
+const yaml = require('yamljs');
+const swaggerDocument = yaml.load('../openapi.yaml');
+
+
+
 app.set('trust proxy', 1);
 app.use(
     rateLimiter({
@@ -34,10 +40,13 @@ app.use(helmet());
 app.use(xss());
 app.use(cors());
 
+
 // Simple landing page
 app.get('/', (req, res) => {
-    res.send('<h1>Jobs API</h1>');
+    res.send('<h1>Jobs API</h1><a href="/api-docs">API Documentation</a>');
 });
+
+app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocument));
 
 // API Routes
 app.use('/api/v1/auth', authRouter);

@@ -1,0 +1,168 @@
+openapi: 3.0.3
+info:
+  title: Jobs API - Online Web
+  version: 1.0.0
+  description: API documentation for the Jobs management system.
+servers:
+  - url: 'https://zero6-jobs-api-p55d.onrender.com/api/v1'
+    description: Live Render Production Server
+paths:
+  /auth/register:
+    post:
+      summary: Register a new user
+      tags:
+        - Authentication
+      operationId: registerUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - email
+                - password
+              properties:
+                name:
+                  type: string
+                  example: ZAZA
+                email:
+                  type: string
+                  format: email
+                  example: ZAZA@gmail.com
+                password:
+                  type: string
+                  format: password
+                  example: kakakaka
+      responses:
+        '201':
+          description: User successfully registered
+        '400':
+          description: Bad Request - Missing fields or invalid email
+
+  /auth/login:
+    post:
+      summary: Login an existing user
+      tags:
+        - Authentication
+      operationId: loginUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: zaza@gmail.com
+                password:
+                  type: string
+                  format: password
+                  example: kakakaka
+      responses:
+        '200':
+          description: Login successful - Returns JWT Token
+        '401':
+          description: Unauthorized - Invalid credentials
+
+  /jobs:
+    get:
+      summary: Get all jobs created by the user
+      tags:
+        - Jobs
+      operationId: getJobs
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: List of jobs retrieved successfully
+    post:
+      summary: Create a new job listing
+      tags:
+        - Jobs
+      operationId: createJob
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - company
+                - position
+              properties:
+                company:
+                  type: string
+                  example: intel
+                position:
+                  type: string
+                  example: SWE
+                status:
+                  type: string
+                  enum: [interview, declined, pending]
+                  example: interview
+      responses:
+        '201':
+          description: Job created successfully
+
+  /jobs/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        description: The MongoDB ObjectId of the job
+        schema:
+          type: string
+          pattern: '^[0-9a-fA-F]{24}$'
+        example: 69b7f8c64b3d022ec80ca31e
+    patch:
+      summary: Update job details
+      tags:
+        - Jobs
+      operationId: updateJob
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                company:
+                  type: string
+                  example: apple
+                position:
+                  type: string
+                  example: fullstack
+                status:
+                  type: string
+                  enum: [interview, declined, pending]
+      responses:
+        '200':
+          description: Job updated successfully
+    delete:
+      summary: Remove a job listing
+      tags:
+        - Jobs
+      operationId: deleteJob
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Job deleted successfully
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
